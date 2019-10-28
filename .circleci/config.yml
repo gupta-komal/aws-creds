@@ -28,5 +28,8 @@ jobs:
       - run:
           name: Enforce coverage
           command: make enforce
+      - run:
+          name: Report to Coveralls
+          command: make coveralls
       - store_artifacts:
           path: coverage.out

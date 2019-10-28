@@ -2,6 +2,7 @@ BIN_DIR ?= ./bin
 PKG_NAME ?= aws-creds
 GO_TOOLS := \
 	github.com/git-chglog/git-chglog/cmd/git-chglog \
+	github.com/mattn/goveralls \
 
 VERSION ?=
 
@@ -12,13 +13,17 @@ default: build
 .PHONY: build
 build:
 	@echo "---> Building"
-	go build -ldflags "-w -s" -o ./bin/$(PKG_NAME) ./cmd/aws-creds
+	go build -ldflags "-w -s" -o $(BIN_DIR)/$(PKG_NAME) ./cmd/aws-creds
 
 .PHONY: clean
 clean:
 	@echo "---> Cleaning"
 	go clean
-	rm -rf ./bin
+	rm -rf $(BIN_DIR) $(COVERAGE_PROFILE)
+
+coveralls:
+	@echo "---> Sending coverage info to Coveralls"
+	$(BIN_DIR)/goveralls -coverprofile=$(COVERAGE_PROFILE) -service=circle-ci
 
 .PHONY: enforce
 enforce:
@@ -51,7 +56,7 @@ release:
 setup: install
 	@echo "--> Setting up tools"
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(BIN_DIR) v1.20.0
-	go get $(GO_TOOLS) && GOBIN=$$(realpath $(BIN_DIR)) go install $(GO_TOOLS)
+	go get $(GO_TOOLS) && GOBIN=$$(pwd)/$(BIN_DIR) go install $(GO_TOOLS)
 
 .PHONY: test
 test:
