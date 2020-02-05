@@ -1,0 +1,14 @@
+version = 1
+
+test_patterns = [
+  '**/*_test.go',
+  'internal/test/**',
+]
+
+[[ analyzers ]]
+  name = 'go'
+  enabled = true
+
+  [analyzers.meta]
+  import_path = 'github.com/sanketsaurav/aws-creds'
+
